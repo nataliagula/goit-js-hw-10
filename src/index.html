@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page title</title>
-    <link rel="stylesheet" href="./sass/index.scss" />
-    <script type="module" src="./index.js"></script>
+    <title>Country Search</title>
+    <style>
+      /* Add your custom CSS styles here */
+      .country-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        display: inline-block;
+      }
+
+      img {
+        max-width: 100px;
+      }
+    </style>
   </head>
+
   <body>
-    <!-- ❗️❗️❗️ Add partials like so for every page -->
-    <include src="./partials/example.html"></include>
+    <label for="search-box">Enter country name:</label>
+    <input type="text" id="search-box" />
+
+    <div id="results-container"></div>
+    <script src="main.js"></script>
   </body>
 </html>
