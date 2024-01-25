@@ -1,22 +1,4 @@
-{
-    "name": "lodash.debounce",
-    "version": "4.0.8",
-    "description": "The lodash method `_.debounce` exported as a module.",
-    "homepage": "https://lodash.com/",
-    "icon": "https://lodash.com/icon.svg",
-    "license": "MIT",
-    "keywords": "lodash-modularized, debounce",
-    "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "contributors": [
-      "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-      "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
-      "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
-    ],
-    "repository": "lodash/lodash",
-    "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
-  }
- 
-  // fetchCountries.js
+// fetchCountries.js
 const fetchCountries = async name => {
   try {
     const response = await fetch(
@@ -33,9 +15,10 @@ const fetchCountries = async name => {
 };
 
 // main.js
-import notiflix from ' notiflix';
+import notiflix from 'notiflix';
 
 import debounce from 'lodash.debounce';
+import { fetchCountries } from './fetchCountries.js';
 
 const searchBox = document.getElementById('search-box');
 const resultsContainer = document.getElementById('results-container');
@@ -108,9 +91,9 @@ function createCountryCard(country) {
   countryPopulation.textContent = `Population: ${country.population || 'N/A'}`;
 
   const countryLanguages = document.createElement('p');
-  countryLanguages.textContent = `Languages: ${
-    country.languages ? country.languages.join(',') : 'N/A'
-  }`;
+  countryLanguages.textContent = `Languages: ${country.languages
+    .map(c => c.name)
+    .join(',')}`;
 
   countryInfo.appendChild(countryName);
   countryInfo.appendChild(countryCapital);
