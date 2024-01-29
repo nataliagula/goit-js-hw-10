@@ -18,7 +18,6 @@ const fetchCountries = async name => {
 import notiflix from 'notiflix';
 
 import debounce from 'lodash.debounce';
-import { fetchCountries } from './fetchCountries.js';
 
 const searchBox = document.getElementById('search-box');
 const resultsContainer = document.getElementById('results-container');
@@ -67,6 +66,12 @@ function displayCountryList(countries) {
     const countryCard = createCountryCard(country);
     resultsContainer.appendChild(countryCard);
   });
+}
+
+function displayCountryInfo(country) {
+  clearResults();
+  const countryCard = createCountryCard(country);
+  resultsContainer.appendChild(countryCard);
 }
 
 function createCountryCard(country) {
