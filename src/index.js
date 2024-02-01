@@ -2,7 +2,7 @@
 const fetchCountries = async name => {
   try {
     const response = await fetch(
-      `https://restcountries.com/v2/name/${name}?fields=name,capital,population,flags,languages`
+      `https://restcountries.com/v2/name/${name}?fields=name,flags`
     );
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -16,7 +16,6 @@ const fetchCountries = async name => {
 
 // main.js
 import notiflix from 'notiflix';
-
 import debounce from 'lodash.debounce';
 
 const searchBox = document.getElementById('search-box');
@@ -80,30 +79,16 @@ function createCountryCard(country) {
 
   const flagImg = document.createElement('img');
   flagImg.src = country.flags.svg; // Corrected variable name
-  flagImg.alt = `${country.name.official} flag`; // Corrected template literal
+  flagImg.alt = `${country.name} flag`; // Displaying only the name
 
   countryCard.appendChild(flagImg);
 
   const countryInfo = document.createElement('div');
 
   const countryName = document.createElement('p');
-  countryName.textContent = country.name.official;
-
-  const countryCapital = document.createElement('p');
-  countryCapital.textContent = `Capital: ${country.capital || 'N/A'}`; // Corrected syntax
-
-  const countryPopulation = document.createElement('p');
-  countryPopulation.textContent = `Population: ${country.population || 'N/A'}`;
-
-  const countryLanguages = document.createElement('p');
-  countryLanguages.textContent = `Languages: ${country.languages
-    .map(c => c.name)
-    .join(',')}`;
+  countryName.textContent = country.name;
 
   countryInfo.appendChild(countryName);
-  countryInfo.appendChild(countryCapital);
-  countryInfo.appendChild(countryPopulation);
-  countryInfo.appendChild(countryLanguages);
 
   countryCard.appendChild(countryInfo);
 
