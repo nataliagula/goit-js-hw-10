@@ -1,16 +1,14 @@
 // fetchCountries.js
 const fetchCountries = async name => {
   try {
-    const response = await fetch(
-      `https://restcountries.com/v2/name/${name}?fields=name,flags`
-    );
+    const url = `https://restcountries.com/v2/name/${name}?fields=name,flags,languages,population,capital`;
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(response.statusText);
+      throw new Error('Failed to fetch countries');
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    throw new Error(`Error fetching data: ${error.message}`);
+    throw new Error(`Error fetching data: ${error}`);
   }
 };
 
@@ -23,30 +21,28 @@ const resultsContainer = document.getElementById('results-container');
 
 searchBox.addEventListener('input', debounce(handleSearch, 300));
 
-function handleSearch() {
+async function handleSearch() {
   const searchTerm = searchBox.value.trim();
-
-  if (searchTerm === '') {
+  if (!searchTerm) {
     clearResults();
     return;
   }
 
-  fetchCountries(searchTerm)
-    .then(countries => {
-      if (countries.length > 10) {
-        showTooManyMatchesAlert();
-      } else if (countries.length >= 2 && countries.length <= 10) {
-        displayCountryList(countries);
-      } else if (countries.length === 1) {
-        displayCountryInfo(countries[0]);
-      } else {
-        showNotFoundError();
-      }
-    })
-    .catch(error => {
-      console.error(error.message);
+  try {
+    const countries = await fetchCountries(searchTerm);
+    if (countries.length > 10) {
+      showTooManyMatchesAlert();
+    } else if (countries.length > 1) {
+      displayCountryList(countries);
+    } else if (countries.length === 1) {
+      displayCountryInfo(countries[0]);
+    } else {
       showNotFoundError();
-    });
+    }
+  } catch (error) {
+    console.error(error);
+    showNotFoundError();
+  }
 }
 
 function clearResults() {
@@ -54,9 +50,7 @@ function clearResults() {
 }
 
 function showTooManyMatchesAlert() {
-  notiflix.Notify.warning(
-    'Too many matches found. Please enter a more specific name.'
-  );
+  notiflix.Notify.warning('Too many matches found. Please enter a more specific name.');
 }
 
 function displayCountryList(countries) {
@@ -71,6 +65,21 @@ function displayCountryInfo(country) {
   clearResults();
   const countryCard = createCountryCard(country);
   resultsContainer.appendChild(countryCard);
+
+  const additionalInfoCountryCard = document.createElement('div'); 
+  resultsContainer.appendChild(additionalInfoCountryCard);
+
+  const countryCapital = document.createElement('p');
+  countryCapital.innerHTML = `<strong>Capital: </strong> ${country.capital}`;
+  additionalInfoCountryCard.appendChild(countryCapital);
+
+  const countryPopulation = document.createElement('p');
+  countryPopulation.innerHTML = `<strong>Population: </strong> ${country.population}`;
+  additionalInfoCountryCard.appendChild(countryPopulation);
+
+  const countryLanguages = document.createElement('p');
+  countryLanguages.innerHTML = '<strong>Languages: </strong> ' + country.languages.map(lang => lang.name).join(', ');
+  additionalInfoCountryCard.appendChild(countryLanguages);
 }
 
 function createCountryCard(country) {
@@ -78,23 +87,18 @@ function createCountryCard(country) {
   countryCard.classList.add('country-card');
 
   const flagImg = document.createElement('img');
-  flagImg.src = country.flags.svg; // Corrected variable name
-  flagImg.alt = `${country.name} flag`; // Displaying only the name
-
+  flagImg.src = country.flags.svg;
+  flagImg.alt = `${country.name} flag`;
   countryCard.appendChild(flagImg);
-
-  const countryInfo = document.createElement('div');
 
   const countryName = document.createElement('p');
   countryName.textContent = country.name;
-
-  countryInfo.appendChild(countryName);
-
-  countryCard.appendChild(countryInfo);
+  countryCard.appendChild(countryName);
 
   return countryCard;
 }
 
 function showNotFoundError() {
-  notiflix.Notify.failure('Oops, there is no country with that name');
+  notiflix.Notify.failure('Oops, there is no country with that name.');
 }
+
